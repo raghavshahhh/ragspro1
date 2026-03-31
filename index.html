@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RAGSPRO | Liquid Glass</title>
+  <link href="https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@300;400;500;600;700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    :root {
+      --bg: #000000;
+      --surface: rgba(255,255,255,0.05);
+      --glass: rgba(255,255,255,0.1);
+      --border: rgba(255,255,255,0.1);
+      --text: #ffffff;
+      --text-muted: rgba(255,255,255,0.6);
+      --accent: #0071e3;
+      --purple: #a855f7;
+      --pink: #ec4899;
+    }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Inter', sans-serif;
+      overflow-x: hidden;
+    }
+    .mesh-bg {
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      background:
+        radial-gradient(ellipse 80% 50% at 20% 40%, rgba(120,50,255,0.15), transparent),
+        radial-gradient(ellipse 60% 40% at 80% 60%, rgba(0,113,227,0.12), transparent),
+        radial-gradient(ellipse 50% 30% at 50% 100%, rgba(236,72,153,0.1), transparent);
+      animation: meshMove 20s ease-in-out infinite;
+    }
+    @keyframes meshMove {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      33% { transform: translate(30px, -30px) scale(1.05); }
+      66% { transform: translate(-20px, 20px) scale(0.95); }
+    }
+    nav {
+      position: fixed;
+      top: 1rem;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 100;
+      padding: 0.75rem 1.5rem;
+      background: rgba(20,20,20,0.6);
+      border: 1px solid var(--border);
+      border-radius: 100px;
+      display: flex;
+      align-items: center;
+      gap: 2rem;
+      backdrop-filter: blur(20px) saturate(180%);
+    }
+    .logo { font-size: 1.125rem; font-weight: 600; letter-spacing: -0.01em; }
+    .nav-links { display: flex; gap: 1.5rem; list-style: none; }
+    .nav-links a { color: var(--text-muted); text-decoration: none; font-size: 0.875rem; transition: color 0.3s; }
+    .nav-links a:hover { color: var(--text); }
+    .nav-cta {
+      padding: 0.5rem 1rem;
+      background: var(--accent);
+      color: white;
+      border-radius: 100px;
+      text-decoration: none;
+      font-size: 0.875rem;
+      font-weight: 500;
+      transition: all 0.3s;
+    }
+    .nav-cta:hover { background: #0077ed; box-shadow: 0 0 20px rgba(0,113,227,0.4); }
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 8rem 2rem 4rem;
+    }
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem 1rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 100px;
+      font-size: 0.8125rem;
+      color: var(--text-muted);
+      margin-bottom: 2rem;
+    }
+    .hero-badge::before {
+      content: '';
+      width: 8px;
+      height: 8px;
+      background: #34c759;
+      border-radius: 50%;
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+    .hero h1 {
+      font-size: clamp(3rem, 10vw, 6rem);
+      font-weight: 700;
+      line-height: 1.05;
+      letter-spacing: -0.03em;
+      margin-bottom: 1.5rem;
+    }
+    .hero h1 span {
+      background: linear-gradient(135deg, #fff 0%, var(--purple) 50%, var(--pink) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .hero p { font-size: 1.25rem; color: var(--text-muted); max-width: 600px; margin: 0 auto 2.5rem; }
+    .hero-ctas { display: flex; gap: 1rem; }
+    .btn {
+      padding: 1rem 2.5rem;
+      border-radius: 100px;
+      font-size: 1rem;
+      font-weight: 500;
+      text-decoration: none;
+      transition: all 0.3s;
+    }
+    .btn-primary { background: var(--text); color: var(--bg); }
+    .btn-primary:hover { transform: scale(1.02); box-shadow: 0 10px 40px rgba(255,255,255,0.2); }
+    .btn-secondary { background: var(--surface); color: var(--text); border: 1px solid var(--border); }
+    .btn-secondary:hover { background: var(--glass); }
+    .floating-cards {
+      display: flex;
+      gap: 1.5rem;
+      margin-top: 4rem;
+      perspective: 1000px;
+    }
+    .float-card {
+      width: 280px;
+      height: 180px;
+      background: var(--glass);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      backdrop-filter: blur(20px);
+      transform-style: preserve-3d;
+      animation: float 6s ease-in-out infinite;
+      transition: transform 0.3s;
+    }
+    .float-card:nth-child(2) { animation-delay: -2s; }
+    .float-card:nth-child(3) { animation-delay: -4s; }
+    .float-card:hover { transform: translateY(-10px) rotateX(5deg); }
+    @keyframes float {
+      0%, 100% { transform: translateY(0) rotateY(0deg); }
+      50% { transform: translateY(-20px) rotateY(5deg); }
+    }
+    .float-card h3 { font-size: 1rem; font-weight: 600; }
+    .float-card p { font-size: 0.8125rem; color: var(--text-muted); margin: 0; }
+    .features {
+      padding: 8rem 2rem;
+    }
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .feature-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 28px;
+      padding: 2rem;
+      transition: all 0.4s;
+    }
+    .feature-card:hover {
+      background: var(--glass);
+      transform: translateY(-4px);
+      border-color: rgba(255,255,255,0.15);
+    }
+    .feature-card.large { grid-column: span 2; grid-row: span 2; min-height: 400px; }
+    .feature-icon {
+      width: 56px;
+      height: 56px;
+      background: linear-gradient(135deg, var(--purple), var(--pink));
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.75rem;
+      margin-bottom: 1.5rem;
+    }
+    .feature-card h3 { font-size: 1.25rem; font-weight: 600; margin-bottom: 0.5rem; }
+    .feature-card p { font-size: 0.9375rem; color: var(--text-muted); line-height: 1.5; }
+    .cta {
+      padding: 8rem 2rem;
+      text-align: center;
+    }
+    .cta-box {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 4rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 40px;
+      position: relative;
+      overflow: hidden;
+    }
+    .cta-box::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: conic-gradient(from 0deg, transparent, var(--purple), transparent 30%);
+      animation: rotate 8s linear infinite;
+      opacity: 0.05;
+    }
+    @keyframes rotate { 100% { transform: rotate(360deg); } }
+    .cta-content { position: relative; z-index: 1; }
+    .cta h2 { font-size: 2.5rem; font-weight: 700; margin-bottom: 1rem; }
+    .cta p { color: var(--text-muted); margin-bottom: 2rem; }
+    footer {
+      padding: 3rem 2rem;
+      border-top: 1px solid var(--border);
+      text-align: center;
+    }
+    footer p { color: var(--text-muted); font-size: 0.875rem; }
+    @media (max-width: 768px) {
+      nav { padding: 0.5rem 1rem; gap: 1rem; }
+      .nav-links { display: none; }
+      .hero h1 { font-size: 2.5rem; }
+      .floating-cards { flex-direction: column; align-items: center; }
+      .float-card { width: 100%; max-width: 320px; }
+      .features-grid { grid-template-columns: 1fr; }
+      .feature-card.large { grid-column: span 1; grid-row: span 1; }
+      .cta-box { padding: 2rem; }
+    }
+  </style>
+</head>
+<body>
+  <div class="mesh-bg"></div>
+  <nav>
+    <div class="logo">RAGSPRO</div>
+    <ul class="nav-links">
+      <li><a href="#features">Features</a></li>
+      <li><a href="#work">Work</a></li>
+      <li><a href="#about">About</a></li>
+    </ul>
+    <a href="mailto:ragsproai@gmail.com" class="nav-cta">Start Project</a>
+  </nav>
+
+  <section class="hero">
+    <div class="hero-badge">Available for new projects</div>
+    <h1>We craft <span>digital experiences</span> that inspire.</h1>
+    <p>Premium design and development for ambitious brands. Based in Delhi, working worldwide.</p>
+    <div class="hero-ctas">
+      <a href="#work" class="btn btn-primary">View Our Work</a>
+      <a href="mailto:ragsproai@gmail.com" class="btn btn-secondary">Get in Touch</a>
+    </div>
+    <div class="floating-cards">
+      <div class="float-card"><h3>AI Integration</h3><p>Smart automation for modern workflows</p></div>
+      <div class="float-card"><h3>Lightning Fast</h3><p>Optimized performance at scale</p></div>
+      <div class="float-card"><h3>Premium Design</h3><p>Pixel-perfect interfaces</p></div>
+    </div>
+  </section>
+
+  <section class="features" id="features">
+    <div class="features-grid">
+      <div class="feature-card large">
+        <div class="feature-icon">+</div>
+        <h3>Full-Stack Development</h3>
+        <p>From concept to deployment using Next.js, Supabase, and modern frameworks.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">AI</div>
+        <h3>AI Automation</h3>
+        <p>Intelligent workflows that eliminate manual tasks.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">App</div>
+        <h3>Mobile Apps</h3>
+        <p>Cross-platform Flutter development.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">UI</div>
+        <h3>UI/UX Design</h3>
+        <p>Beautiful interfaces users love.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">Sec</div>
+        <h3>Enterprise Security</h3>
+        <p>Bank-grade protection for your data.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="cta" id="contact">
+    <div class="cta-box">
+      <div class="cta-content">
+        <h2>Let's create together.</h2>
+        <p>Have a project in mind? We'd love to hear about it.</p>
+        <a href="mailto:ragsproai@gmail.com" class="btn btn-primary">Get in Touch</a>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <p>2026 RAGSPRO. Crafted with precision in Delhi.</p>
+  </footer>
+
+  <script>
+    gsap.registerPlugin(ScrollTrigger);
+    gsap.from('.hero-badge', { opacity: 0, y: 30, duration: 0.8, delay: 0.2 });
+    gsap.from('.hero h1', { opacity: 0, y: 50, duration: 1, delay: 0.4 });
+    gsap.from('.hero p', { opacity: 0, y: 30, duration: 0.8, delay: 0.6 });
+    gsap.from('.hero-ctas', { opacity: 0, y: 30, duration: 0.8, delay: 0.8 });
+    gsap.from('.feature-card', {
+      scrollTrigger: { trigger: '.features-grid', start: 'top 80%' },
+      opacity: 0, y: 60, stagger: 0.15, duration: 0.8
+    });
+  </script>
+</body>
+</html>
